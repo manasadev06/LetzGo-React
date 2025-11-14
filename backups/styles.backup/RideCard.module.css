@@ -1,0 +1,5 @@
+.card { display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:8px; border:1px solid #eee; margin-bottom:8px; background:#fff; }
+.info h4 { margin:0; font-size:15px; }
+.info p { margin:4px 0 0 0; font-size:13px; color:#555; }
+.meta p { margin:0 0 6px 0; font-size:13px; color:#333; }
+.meta button { padding:6px 10px; border-radius:8px; border:none; background:#10b981; color:white; cursor:pointer; }

@@ -1,0 +1,18 @@
+.form { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.input {
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(2,6,23,0.06);
+  min-width:160px;
+  font-size:14px;
+}
+.select { padding:10px 12px; border-radius:10px; border:1px solid rgba(2,6,23,0.06); }
+.button {
+  padding:10px 14px;
+  background:#0ea5a4;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}

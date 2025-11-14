@@ -1,0 +1,304 @@
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --bg-light: #f8fafc;
+  --error: #ef4444;
+  --error-bg: #fef2f2;
+  --success: #10b981;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  background: linear-gradient(90deg, #1e40af, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--text-light);
+  text-align: center;
+  margin: 0 auto 3rem;
+  font-size: 1.125rem;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.form {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.formGroup {
+  margin-bottom: 0.5rem;
+  position: relative;
+  min-width: 0; /* Prevent flexbox from making items too wide */
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inputIcon {
+  margin-right: 0.625rem;
+  color: var(--primary);
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+  transition: var(--transition);
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+  height: 46px;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+  opacity: 0.7;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364758b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.1em;
+  padding-right: 2.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.select:hover {
+  border-color: #cbd5e1;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.primaryButton,
+.secondaryButton {
+  padding: 0.9375rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  letter-spacing: 0.3px;
+}
+
+.primaryButton {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.primaryButton:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.primaryButton:active {
+  transform: translateY(0);
+}
+
+.secondaryButton {
+  background-color: white;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.secondaryButton:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.error {
+  color: var(--error);
+  background-color: var(--error-bg);
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  margin: 0 0 2rem;
+  font-size: 0.9375rem;
+  text-align: center;
+  grid-column: 1 / -1;
+  border-left: 4px solid var(--error);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: var(--error);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.8em;
+  line-height: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 900px) {
+  .card {
+    padding: 2.25rem 2rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1.0625rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .formGrid {
+    gap: 1.5rem 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1.25rem;
+  }
+  
+  .card {
+    padding: 2rem 1.75rem;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.0625rem;
+    margin-bottom: 2.25rem;
+  }
+  
+  .buttonGroup {
+    flex-direction: column;
+    gap: 0.875rem;
+    margin-top: 2.5rem;
+  }
+  
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.25rem 1rem;
+  }
+  
+  .card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 16px;
+  }
+  
+  .title {
+    font-size: 1.625rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .formGrid {
+    gap: 1.25rem;
+  }
+  
+  .input,
+  .select {
+    padding: 0.8125rem 1rem;
+    font-size: 0.95rem;
+  }
+}

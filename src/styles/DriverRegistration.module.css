@@ -1,0 +1,6 @@
+.wrap { max-width:620px; margin:20px auto; padding:16px; }
+.form { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form label { display:flex; flex-direction:column; }
+.form input, .form select { padding:8px; border-radius:6px; border:1px solid #ddd; }
+.err { color:#b91c1c; }
+.form button { grid-column:1 / -1; padding:10px; background:#2563eb; color:white; border-radius:8px; border:none; }

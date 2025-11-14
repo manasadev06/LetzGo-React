@@ -1,0 +1,7 @@
+.map {
+  height:420px; border-radius:10px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center;
+  position:relative; background:#f9fafb;
+}
+.mapSmall { height:220px; border-radius:10px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; background:#f9fafb; }
+.pin { font-size:28px; position:absolute; transform:translateY(-50%); }
+.legend { position:absolute; bottom:10px; left:10px; font-size:13px; background:#fff; padding:6px 8px; border-radius:6px; box-shadow:0 4px 10px rgba(0,0,0,0.04); }

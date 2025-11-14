@@ -1,0 +1,8 @@
+.container { max-width:1000px; margin:20px auto; padding:16px; }
+.form { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
+.form label { display:flex; flex-direction:column; gap:6px; }
+.form input { padding:8px; border-radius:6px; border:1px solid #ddd; }
+.form button { padding:8px 12px; border-radius:8px; background:#2563eb; color:white; border:none; }
+.results { display:flex; gap:16px; margin-top:18px; }
+.mapWrap { flex:1; min-width:300px; }
+.cards { width:360px; max-height:420px; overflow:auto; }

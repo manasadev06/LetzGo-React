@@ -1,0 +1,4 @@
+.wrap { max-width:900px; margin:20px auto; padding:16px; display:flex; gap:16px; align-items:flex-start; }
+.card { padding:12px; border-radius:8px; border:1px solid #eee; background:#fff; min-width:320px; }
+.actions { display:flex; gap:12px; margin-top:12px; }
+.actions button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }

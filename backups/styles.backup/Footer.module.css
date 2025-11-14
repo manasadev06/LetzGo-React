@@ -1,0 +1,19 @@
+.footer {
+  background:#0b1220;
+  color:#cbd5e1;
+  padding:18px 20px;
+  margin-top: 0; /* remove previous top margin */
+  /* make footer visually separated */
+  box-shadow: 0 -6px 18px rgba(2,6,23,0.04);
+}
+.inner {
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.links { display:flex; gap:12px; }
+.link { color:#94a3b8; text-decoration:none; font-size:14px; }
+.link:hover { color:white; }

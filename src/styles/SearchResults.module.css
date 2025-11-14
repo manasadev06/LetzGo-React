@@ -1,0 +1,4 @@
+.wrapper { display:flex; gap:18px; align-items:flex-start; }
+.filters { width:260px; }
+.filterCard { background:white; padding:14px; border-radius:12px; box-shadow:0 8px 24px rgba(2,6,23,0.04); }
+.results { flex:1; }
