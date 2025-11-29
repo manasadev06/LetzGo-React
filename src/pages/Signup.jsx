@@ -37,7 +37,7 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/signup", {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,7 +52,7 @@ export default function Signup() {
 
       // Store user data and redirect
       localStorage.setItem("user", JSON.stringify(data.user || {}));
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       setError(err.message || "An error occurred during signup. Please try again.");
     } finally {

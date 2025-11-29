@@ -15,39 +15,38 @@ export default function Login() {
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
+ async function handleSubmit(e) {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    if (!form.email || !form.password) {
-      setError("Please enter both email and password.");
-      return;
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: form.email,
+        password: form.password,
+      }),
+    });
+
+    // Read body ONLY ONCE
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Login failed");
     }
 
-    setLoading(true);
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login failed");
-
-      localStorage.setItem("user", JSON.stringify(data.user || {}));
-
-      if (data.user?.role === "driver") {
-        navigate("/driver-dashboard");
-      } else {
-        navigate("/");
-      }
-    } catch (err) {
-      setError(err.message || "An error occurred during login. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    // success: store user and go home
+    localStorage.setItem("user", JSON.stringify(data.user || {}));
+    navigate("/");   // or wherever you want after login
+  } catch (err) {
+    setError(err.message || "An error occurred during login.");
+  } finally {
+    setLoading(false);
   }
+}
+
 
   return (
     <div className={styles.page}>
