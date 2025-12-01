@@ -12,8 +12,10 @@ import DriverRegistration from "./pages/DriverRegistration";
 import DriverDashboard from "./pages/DriverDashboard";
 import Profile from "./pages/Profile";
 import Maps from "./pages/Maps";
-import SearchResults from "./pages/SearchResults";
 import RideDetail from "./pages/RideDetail";
+import DriverConfirmation from "./pages/DriverConfirmation";
+import MyBookings from "./pages/MyBookings";
+
 
 // Add this CSS to ensure proper layout with fixed header and footer
 const appStyles = {
@@ -50,8 +52,9 @@ export default function App(){
             <Route path="/driver-dashboard" element={<DriverDashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/maps" element={<Maps />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/ride/:id" element={<RideDetail />} />
+             <Route path="/rides/:rideId" element={<RideDetail />} />
+            <Route path="/driver-confirmation" element={<DriverConfirmation />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
           </Routes>
         </main>
         <Footer />

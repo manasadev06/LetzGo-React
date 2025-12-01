@@ -1,21 +1,67 @@
+// src/components/RideCard.jsx
 import React from "react";
-import { Link } from "react-router-dom";
-import styles from "../styles/RideCard.module.css";
 
-export default function RideCard({ ride }) {
+export default function RideCard({ ride, onClick }) {
+  console.log("RideCard props:", ride);
+
   return (
-    <div className={styles.card}>
-      <div className={styles.left}>
-        <div className={styles.driver}>{ride.driverName}</div>
-        <div className={styles.meta}>{ride.vehicle} • {ride.seatsAvailable} seats</div>
-        <div className={styles.route}>{ride.from} → {ride.to}</div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "16px 20px",
+        marginBottom: "12px",
+        borderRadius: "16px",
+        background: "#ffffff",
+        boxShadow: "0 8px 24px rgba(15,23,42,0.08)",
+        width: "100%",
+      }}
+    >
+      {/* Left: route + details */}
+      <div>
+        <div
+          style={{
+            fontSize: "18px",
+            fontWeight: "700",
+            marginBottom: "8px",
+          }}
+        >
+          {ride.from} → {ride.to}
+        </div>
+
+        <div style={{ fontSize: "14px", color: "#4b5563" }}>
+          <div>
+            <strong>Time:</strong> {ride.time}
+          </div>
+          <div>
+            <strong>Vehicle:</strong> {ride.vehicle}</div>
+          <div>
+            <strong>Seats:</strong> {ride.seatsAvailable}
+          </div>
+          <div>
+            <strong>Price/seat:</strong> ₹{ride.price}
+          </div>
+        </div>
       </div>
 
-      <div className={styles.right}>
-        <div className={styles.price}>₹{ride.price}</div>
-        <div className={styles.time}>{ride.time}</div>
-        <Link to={`/ride/${ride.id}`} className={styles.view}>View</Link>
-      </div>
+      {/* Right: View button */}
+      <button
+        onClick={onClick}
+        style={{
+          padding: "10px 18px",
+          borderRadius: "999px",
+          border: "none",
+          background: "#2563eb",
+          color: "#ffffff",
+          fontWeight: "600",
+          cursor: "pointer",
+          fontSize: "14px",
+        }}
+      >
+        View
+      </button>
     </div>
+    
   );
 }

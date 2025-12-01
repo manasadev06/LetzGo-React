@@ -59,6 +59,7 @@ router.post("/login", async (req, res) => {
       [email]
     );
 
+
     if (rows.length === 0) {
       return res.status(400).json({ message: "No account found with this email" });
     }
@@ -84,8 +85,5 @@ router.post("/login", async (req, res) => {
     return res.status(500).json({ message: "Server error during login" });
   }
 });
-
-
-
 
 module.exports = router;
