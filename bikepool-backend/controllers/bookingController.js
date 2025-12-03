@@ -1,5 +1,5 @@
 // controllers/rideController.js
-const db = require("../config/db"); // mysql2 connection
+const db = require("../db");
 
 // 🚐 POST /api/rides/book
 exports.bookRide = (req, res) => {

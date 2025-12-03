@@ -34,12 +34,23 @@ export default function Login() {
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || "Login failed");
-    }
+  throw new Error(data.message || "Login failed");
+} else {
+  // Clear old data
+  localStorage.removeItem("userId");
+  localStorage.removeItem("username");
+  localStorage.removeItem("email");
 
+  // Store new user
+  localStorage.setItem("userId", data.user.id);
+  localStorage.setItem("username", data.user.username);
+  localStorage.setItem("email", data.user.email);
+
+  navigate("/"); 
+}
     // success: store user and go home
-    localStorage.setItem("user", JSON.stringify(data.user || {}));
-    navigate("/");   // or wherever you want after login
+   
+    // or wherever you want after login
   } catch (err) {
     setError(err.message || "An error occurred during login.");
   } finally {

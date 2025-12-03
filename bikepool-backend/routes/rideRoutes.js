@@ -119,7 +119,10 @@ router.post("/search", async (req, res) => {
 router.post("/book", rideController.bookRide);
 // My bookings for a passenger
 router.get("/my-bookings/:userId", rideController.getMyBookings);
-
+router.get("/my-offers/:userId", rideController.getRidesByDriver);
+router.delete("/cancel/:rideId", rideController.cancelRide);
+router.get("/driver-earnings/:userId", rideController.getDriverEarnings);
+router.get("/:rideId/passengers", rideController.getPassengersForRide);
 
 // export router
 module.exports = router;

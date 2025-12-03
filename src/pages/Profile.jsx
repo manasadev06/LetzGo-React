@@ -1,15 +1,32 @@
 import React from "react";
-import styles from "../styles/Profile.module.css";
 
-export default function Profile(){
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+export default function Profile() {
+  const username = localStorage.getItem("username") || "Guest";
+  const email = localStorage.getItem("email") || "Not logged in";
+  const role = "customer"; // for now, everyone is a customer/passenger
+
   return (
-    <div className={styles.wrap}>
+    <div style={{ padding: "24px", maxWidth: "800px", margin: "auto" }}>
       <h2>Profile</h2>
-      <div className={styles.card}>
-        <p><strong>Name:</strong> {user.username || "Guest"}</p>
-        <p><strong>Email:</strong> {user.email || "-"}</p>
-        <p><strong>Role:</strong> {user.role || "customer"}</p>
+
+      <div
+        style={{
+          marginTop: "16px",
+          padding: "16px 20px",
+          borderRadius: "12px",
+          border: "1px solid #e5e7eb",
+          background: "#fff",
+        }}
+      >
+        <p>
+          <strong>Name:</strong> {username}
+        </p>
+        <p>
+          <strong>Email:</strong> {email}
+        </p>
+        <p>
+          <strong>Role:</strong> {role}
+        </p>
       </div>
     </div>
   );

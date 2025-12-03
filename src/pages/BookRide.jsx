@@ -6,7 +6,6 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import RideCard from "../components/RideCard";
-import MapDummy from "../components/MapDummy";
 import styles from "../styles/BookRide.module.css";
 
 export default function BookRide() {

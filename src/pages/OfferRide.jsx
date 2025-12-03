@@ -83,7 +83,9 @@ export default function OfferRide() {
 
       if (!response.ok) {
         setError(data.message || "Failed to post ride");
-        return;
+      }
+      else{
+        navigate("/driver/dashboard");
       }
 
       // ✅ Success – go to confirmation page

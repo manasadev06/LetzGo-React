@@ -3,11 +3,16 @@ import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function RideDetail() {
+  console.log("[RideDetail] COMPONENT RENDERED");
   const { state } = useLocation();
   const navigate = useNavigate();
   const { rideId } = useParams();
 
   const ride = state?.ride;
+  const isFull = ride.seatsAvailable === 0;
+const isCancelled = ride.status === "CANCELLED";
+const disableBooking = isFull || isCancelled;
+
 
   // local state for booking
   const [seats, setSeats] = useState(1);
@@ -27,39 +32,69 @@ export default function RideDetail() {
     );
   }
 
-  async function handleBook() {
-    setMessage("");
-    setError("");
-    const seatCount = Number(seats);
+ async function handleBook() {
+  setMessage("");
+  setError("");
 
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/rides/book`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rideId: ride.id,
-            userId, 
-            seats:seatCount,
-           }),
-        }
-      );
-
-      const data = await res.json();
-      console.log("Book response:", res.status, data);
-
-      if (!res.ok) {
-        setError(data.message || "Failed to book ride");
-        return;
-      }
-
-      setMessage("Ride booked successfully!");
-    } catch (err) {
-      console.error("Book error:", err);
-      setError("Something went wrong while booking the ride");
-    }
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    setError("Please login to book a ride.");
+    console.log("[RideDetail] No userId in localStorage");
+    return;
   }
+
+  const seatCount = Number(seats);
+  if (!seatCount || seatCount < 1) {
+    setError("Select at least 1 seat");
+    console.log("[RideDetail] Invalid seatCount:", seatCount);
+    return;
+  }
+
+  console.log("[RideDetail] handleBook START", {
+    rideId: ride.id,
+    userId,
+    seats: seatCount,
+  });
+
+  try {
+    const res = await fetch("http://localhost:5000/api/rides/book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        rideId: ride.id,
+        userId: Number(userId),
+        seats: seatCount,
+      }),
+    });
+
+    console.log("[RideDetail] Response status:", res.status);
+
+    const raw = await res.text();
+    console.log("[RideDetail] Raw response text:", raw);
+
+    let data;
+    try {
+      data = raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      console.error("[RideDetail] JSON parse error:", e);
+      setError("Server returned invalid response");
+      return;
+    }
+
+    console.log("[RideDetail] Parsed data:", data);
+
+    if (!res.ok) {
+      setError(data.message || "Failed to book ride");
+      return;
+    }
+
+    setMessage("Ride booked successfully!");
+  } catch (err) {
+    console.error("[RideDetail] Fetch error:", err);
+    setError("Cannot reach server while booking the ride");
+  }
+}
+
 
   return (
     <div style={{ padding: "24px", maxWidth: "600px", margin: "auto" }}>
@@ -101,20 +136,41 @@ export default function RideDetail() {
 </div>
 
       <button
-        onClick={handleBook}
-        style={{
-          marginTop: "16px",
-          padding: "10px 18px",
-          borderRadius: "999px",
-          border: "none",
-          background: "#16a34a",
-          color: "#fff",
-          fontWeight: "600",
-          cursor: "pointer",
-        }}
-      >
-        Book Ride
-      </button>
+  onClick={handleBook}
+  disabled={disableBooking}
+  style={{
+    marginTop: "16px",
+    padding: "10px 18px",
+    borderRadius: "999px",
+    border: "none",
+    background: disableBooking ? "#9ca3af" : "#16a34a",
+    color: "#fff",
+    fontWeight: "600",
+    cursor: disableBooking ? "not-allowed" : "pointer",
+  }}
+>
+  {isCancelled
+    ? "Ride Cancelled"
+    : isFull
+    ? "Ride Full"
+    : "Book Ride"}
+</button>
+
+  Book Ride
+
+{isCancelled && (
+  <p style={{ color: "#dc2626", marginTop: "8px" }}>
+    This ride was cancelled by the driver.
+  </p>
+)}
+
+{isFull && !isCancelled && (
+  <p style={{ color: "#f97316", marginTop: "8px" }}>
+    No seats available for this ride.
+  </p>
+)}
+
+
 
       {message && (
         <p style={{ marginTop: "10px", color: "#15803d", fontWeight: "600" }}>

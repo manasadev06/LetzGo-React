@@ -24,12 +24,14 @@ export default function DriverConfirmation() {
         <p><strong>Price per Seat:</strong> ₹{form.price}</p>
       </div>
 
-      <button
-        onClick={() => navigate("/")}
-        style={{ marginTop: "20px", padding: "8px 16px" }}
-      >
-        Go to Home
-      </button>
+      <button onClick={() => navigate("/driver-dashboard")}>
+  Go to Dashboard
+</button>
+
+<button onClick={() => navigate("/")}>
+  Go to Home
+</button>
+
     </div>
   );
 }

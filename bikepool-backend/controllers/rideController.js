@@ -1,137 +1,278 @@
-// controllers/rideController.js
-const db = require("../config/db"); // mysql2 connection
+const db = require("../db"); // use the single pool
 
-// 🔍 GET /api/rides/search?from=A&to=B
-exports.searchRides = (req, res) => {
+// =============================
+// 1) SEARCH RIDES
+// =============================
+exports.searchRides = async (req, res) => {
   const { from, to } = req.query;
 
-  const fromLike = `%${from || ""}%`;
-  const toLike = `%${to || ""}%`;
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT 
+        id,
+        user_id,
+        pickup,
+        drop_location,
+        ride_date,
+        DATE_FORMAT(ride_time, '%H:%i') AS ride_time,
+        vehicle_type,
+        seats_available,
+        price_per_seat
+      FROM offered_rides
+      WHERE pickup LIKE ? AND drop_location LIKE ? AND status = 'ACTIVE'
+      `,
+      [`%${from || ""}%`, `%${to || ""}%`]
+    );
 
-  const sql = `
-    SELECT 
-      id,
-      user_id,
-      pickup,
-      drop_location,
-      ride_date,
-      ride_time,
-      vehicle_type,
-      seats_available,
-      price_per_seat
-    FROM offered_rides
-    WHERE pickup LIKE ? AND drop_location LIKE ?
-  `;
-
-  db.query(sql, [fromLike, toLike], (err, results) => {
-    if (err) {
-      console.error("Error searching rides:", err);
-      return res.status(500).json({ message: "Error searching rides" });
-    }
-
-    return res.json(results);
-  });
+    return res.json(rows);
+  } catch (err) {
+    console.error("searchRides error:", err);
+    return res.status(500).json({ message: "Error searching rides" });
+  }
 };
 
-
-// 🚐 POST /api/rides/book
-exports.bookRide = (req, res) => {
+// =============================
+// 2) BOOK RIDE
+// =============================
+exports.bookRide = async (req, res) => {
   const { userId, rideId, seats } = req.body;
-  const seatCount = seats || 1;
+  const seatCount = Number(seats) || 1;
 
   if (!userId || !rideId) {
     return res.status(400).json({ message: "userId and rideId are required" });
   }
 
-  const getRideSql = "SELECT * FROM offered_rides WHERE id = ?";
-  db.query(getRideSql, [rideId], (err, rideRows) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: "Server error" });
-    }
+  try {
+    // get ride
+    const [rides] = await db.query(
+      "SELECT seats_available, price_per_seat FROM offered_rides WHERE id = ?",
+      [rideId]
+    );
 
-    if (rideRows.length === 0) {
+    if (rides.length === 0) {
       return res.status(404).json({ message: "Ride not found" });
     }
 
-    const ride = rideRows[0];
+    const ride = rides[0];
 
     if (ride.seats_available < seatCount) {
       return res.status(400).json({ message: "Not enough seats available" });
     }
 
-    const insertBookingSql = `
+    // insert booking
+    const totalPrice = seatCount * ride.price_per_seat;
+
+    const [result] = await db.query(
+      `
       INSERT INTO bookings (passenger_id, ride_id, seats_booked)
       VALUES (?, ?, ?)
-    `;
-
-    db.query(
-      insertBookingSql,
-      [userId, rideId, seatCount],
-      (err, result) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ message: "Booking failed" });
-        }
-
-        const updateSeatsSql = `
-          UPDATE offered_rides
-          SET seats_available = seats_available - ?
-          WHERE id = ?
-        `;
-
-        db.query(updateSeatsSql, [seatCount, rideId], (err2) => {
-          if (err2) {
-            console.error(err2);
-            return res.status(500).json({ message: "Seat update failed" });
-          }
-
-          return res.status(201).json({
-            message: "Booking confirmed ✅",
-            bookingId: result.insertId,
-          });
-        });
-      }
+      `,
+      [userId, rideId, seatCount]
     );
-  });
+
+    // update seats
+    await db.query(
+      "UPDATE offered_rides SET seats_available = seats_available - ? WHERE id = ?",
+      [seatCount, rideId]
+    );
+
+    return res.status(201).json({
+      message: "Booking confirmed",
+      bookingId: result.insertId,
+    });
+  } catch (err) {
+    console.error("bookRide error:", err);
+    return res.status(500).json({ message: "Server error booking ride" });
+  }
 };
 
-// 👤 GET /api/rides/my-bookings/:userId
-exports.getMyBookings = (req, res) => {
+// =============================
+// 3) MY BOOKINGS
+// =============================
+exports.getMyBookings = async (req, res) => {
   const { userId } = req.params;
 
   if (!userId) {
     return res.status(400).json({ message: "userId is required" });
   }
 
-  const sql = `
-    SELECT
-      b.id AS booking_id,
-      b.seats_booked,
-      b.booked_at,
-      r.id AS ride_id,
-      r.pickup,
-      r.drop_location,
-      r.ride_date,
-      DATE_FORMAT(r.ride_time, '%H:%i') AS ride_time,
-      r.vehicle_type,
-      r.price_per_seat,
-      (r.price_per_seat * b.seats_booked) AS total_price
-    FROM bookings b
-    JOIN offered_rides r ON b.ride_id = r.id
-    WHERE b.passenger_id = ?
-    ORDER BY b.booked_at DESC
-  `;
-
-  db.query(sql, [userId], (err, rows) => {
-    if (err) {
-      console.error("Error fetching my bookings:", err);
-      return res
-        .status(500)
-        .json({ message: "Server error while fetching bookings" });
-    }
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT
+        b.id AS booking_id,
+        b.seats_booked,
+        b.booked_at,
+        r.pickup,
+        r.drop_location,
+        r.ride_date,
+        DATE_FORMAT(r.ride_time, '%H:%i') AS ride_time,
+        r.vehicle_type,
+        r.price_per_seat,
+        (r.price_per_seat * b.seats_booked) AS total_price
+      FROM bookings b
+      JOIN offered_rides r ON b.ride_id = r.id
+      WHERE b.passenger_id = ?
+      ORDER BY b.booked_at DESC
+      `,
+      [userId]
+    );
 
     return res.json(rows);
-  });
+  } catch (err) {
+    console.error("getMyBookings error:", err);
+    return res
+      .status(500)
+      .json({ message: "Error fetching bookings" });
+  }
 };
 
+
+// =============================
+// 4) MY OFFERS (DRIVER DASHBOARD)
+// =============================
+exports.getRidesByDriver = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ message: "userId is required" });
+  }
+
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT 
+        r.id,
+        r.pickup,
+        r.drop_location AS dropLocation,
+        r.ride_date AS rideDate,
+        r.status,
+        DATE_FORMAT(r.ride_time, '%H:%i') AS rideTime,
+        r.vehicle_type AS vehicleType,
+        r.seats_available AS seatsAvailable,
+        r.price_per_seat AS pricePerSeat,
+
+        -- seats originally offered
+        (r.seats_available + IFNULL(SUM(b.seats_booked), 0)) AS totalSeats,
+
+        -- seats booked by passengers
+        IFNULL(SUM(b.seats_booked), 0) AS seatsBooked
+
+      FROM offered_rides r
+      LEFT JOIN bookings b ON b.ride_id = r.id
+      WHERE r.user_id = ?
+      GROUP BY r.id
+      ORDER BY r.ride_date DESC, r.ride_time DESC
+      `,
+      [userId]
+    );
+
+    return res.json(rows);
+  } catch (err) {
+    console.error("getRidesByDriver error:", err);
+    return res.status(500).json({ message: "Error fetching driver rides" });
+  }
+};
+
+
+exports.cancelRide = async (req, res) => {
+  const { rideId } = req.params;
+  const { userId } = req.body;
+
+  if (!rideId || !userId) {
+    return res.status(400).json({ message: "rideId and userId are required" });
+  }
+
+  try {
+    // verify ownership
+    const [rides] = await db.query(
+      "SELECT id FROM offered_rides WHERE id = ? AND user_id = ?",
+      [rideId, userId]
+    );
+
+    if (rides.length === 0) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // mark ride cancelled
+    await db.query(
+      "UPDATE offered_rides SET status = 'CANCELLED' WHERE id = ?",
+      [rideId]
+    );
+
+    return res.json({ message: "Ride cancelled ✅" });
+  } catch (err) {
+    console.error("cancelRide error:", err);
+    return res.status(500).json({ message: "Error cancelling ride" });
+  }
+};
+
+
+// =============================
+// 6) DRIVER EARNINGS SUMMARY
+// GET /api/rides/driver-earnings/:userId
+// =============================
+exports.getDriverEarnings = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ message: "userId is required" });
+  }
+
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT
+        COUNT(DISTINCT r.id) AS totalRides,
+        IFNULL(SUM(b.seats_booked), 0) AS totalSeatsBooked,
+        IFNULL(SUM(b.seats_booked * r.price_per_seat), 0) AS totalEarnings
+      FROM offered_rides r
+      LEFT JOIN bookings b ON b.ride_id = r.id
+      WHERE r.user_id = ?
+        AND r.status != 'CANCELLED'
+      `,
+      [userId]
+    );
+
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error("driver earnings error:", err);
+    return res
+      .status(500)
+      .json({ message: "Error fetching driver earnings" });
+  }
+};
+
+
+// =============================
+// 7) PASSENGERS FOR A RIDE
+// GET /api/rides/:rideId/passengers
+// =============================
+exports.getPassengersForRide = async (req, res) => {
+  const { rideId } = req.params;
+
+  try {
+    const [rows] = await db.query(
+      `
+      SELECT
+        u.id,
+        u.name,
+        u.email,
+        b.seats_booked,
+        b.booked_at
+      FROM bookings b
+      JOIN users u ON b.passenger_id = u.id
+      WHERE b.ride_id = ?
+      `,
+      [rideId]
+    );
+
+    return res.json(rows);
+  } catch (err) {
+    console.error("passenger list error:", err);
+    return res
+      .status(500)
+      .json({ message: "Error fetching passengers" });
+  }
+};
