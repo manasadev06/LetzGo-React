@@ -3,12 +3,14 @@ import { Link, useLocation } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import styles from "../styles/Header.module.css";
 
-export default function Header() {
+export default function Header({ theme, setTheme }) {
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-    const isLoggedIn = !!localStorage.getItem("userId");
+  const location = useLocation();
+ const isLoggedIn = Boolean(localStorage.getItem("userId"));
   const username = localStorage.getItem("username");
 
 
@@ -72,85 +74,81 @@ export default function Header() {
             >
               Book a Ride
             </Link>
-
-            {isLoggedIn && (
-              <>
-                <Link 
-                  to="/my-bookings" 
-                  className={`${styles.navLink} ${isActive('/my-bookings')}`}
-                  onClick={closeMenu}
-                >
-                  My Bookings
-                </Link>
-
-                {/* optional later when you have page ready */}
-                {/* <Link 
-                  to="/my-offers" 
-                  className={`${styles.navLink} ${isActive('/my-offers')}`}
-                  onClick={closeMenu}
-                >
-                  My Offers
-                </Link> */}
-              </>
-            )}
-
-            <Link 
-              to="/maps" 
-              className={`${styles.navLink} ${isActive('/maps')}`}
-              onClick={closeMenu}
-            >
-              Map
-            </Link>
-
-            {isLoggedIn && (
-              <Link 
-                to="/profile" 
-                className={`${styles.navLink} ${isActive('/profile')}`}
-                onClick={closeMenu}
-              >
-                Profile
-              </Link>
-            )}
           </div>
+
+
+
 
           <div className={styles.authButtons}>
-            {!isLoggedIn ? (
-              <>
-                <Link 
-                  to="/login" 
-                  className={styles.loginButton}
-                  onClick={closeMenu}
-                >
-                  Log In
-                </Link>
-                <Link 
-                  to="/signup" 
-                  className={styles.signupButton}
-                  onClick={closeMenu}
-                >
-                  Sign Up
-                </Link>
-              </>
-            ) : (
-              <>
-                <span style={{ marginRight: "8px" }}>
-                  {username ? `Hi, ${username}` : "Logged in"}
-                </span>
-                <button
-                  type="button"
-                  className={styles.loginButton}
-                  onClick={() => {
-                    localStorage.removeItem("userId");
-                    localStorage.removeItem("username");
-                    closeMenu();
-                    window.location.href = "/"; // force refresh, simplest
-                  }}
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+  {!isLoggedIn ? (
+    // 🔹 NOT LOGGED IN → show Login + Signup
+    <>
+      <Link
+        to="/login"
+        className={styles.loginButton}
+        onClick={closeMenu}
+      >
+        Log In
+      </Link>
+
+      <Link
+        to="/signup"
+        className={styles.signupButton}
+        onClick={closeMenu}
+      >
+        Sign Up
+      </Link>
+    </>
+  ) : (
+    // 🔹 LOGGED IN → show "Hi, username" dropdown
+    <div
+      className={styles.profileWrapper}
+      onClick={() => setShowProfileMenu((prev) => !prev)}
+    >
+      <span className={styles.profileTrigger}>
+        Hi, {username || "User"} ▾
+      </span>
+
+      {showProfileMenu && (
+        <div className={styles.profileMenu}>
+          <Link
+            to="/profile"
+            onClick={() => {
+              setShowProfileMenu(false);
+              closeMenu();
+            }}
+            className={styles.menuItem}
+          >
+            Profile
+          </Link>
+
+          <Link
+            to="/dashboard"
+            onClick={() => {
+              setShowProfileMenu(false);
+              closeMenu();
+            }}
+            className={styles.menuItem}
+          >
+            Dashboard
+          </Link>
+
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = "/";
+            }}
+            className={styles.menuItemDanger}
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
+
         </nav>
 
       </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "../styles/Dashboard.module.css";
+import styles from "../styles/DriverDashboard.module.css";
 
 export default function DriverDashboard() {
   const [postedRides, setPostedRides] = useState([]);

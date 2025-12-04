@@ -43,3 +43,26 @@ html, body, #root {
   margin: 0 auto;
   padding: 0 16px;
 }
+
+
+body.light {
+  background: #f9fafb;
+  color: #111827;
+}
+
+body.dark {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+body.dark a {
+  
+  color: #93c5fd;
+}
+
+body.dark .card,
+body.dark .profileMenu {
+  background: #020617;
+  border-color: #1e293b;
+}
+

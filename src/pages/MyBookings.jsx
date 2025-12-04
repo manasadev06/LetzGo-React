@@ -136,19 +136,7 @@ export default function MyBookings() {
           </div>
         ))}
 
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginTop: "16px",
-          padding: "8px 16px",
-          borderRadius: "999px",
-          border: "1px solid #9ca3af",
-          background: "#fff",
-          cursor: "pointer",
-        }}
-      >
-        Back
-      </button>
+      
     </div>
   );
 }

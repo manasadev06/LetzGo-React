@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -15,6 +15,9 @@ import Maps from "./pages/Maps";
 import RideDetail from "./pages/RideDetail";
 import DriverConfirmation from "./pages/DriverConfirmation";
 import MyBookings from "./pages/MyBookings";
+import Dashboard from "./pages/Dashboard";
+
+
 
 
 // Add this CSS to ensure proper layout with fixed header and footer
@@ -36,10 +39,22 @@ const mainStyles = {
 };
 
 export default function App(){
+
+  const [theme, setTheme] = useState(
+  localStorage.getItem("theme") || "light"
+);
+
+useEffect(() => {
+  document.body.className = theme;
+  localStorage.setItem("theme", theme);
+}, [theme]);
+
+
   return (
     <BrowserRouter>
       <div className="app" style={appStyles}>
-        <Header />
+        <Header theme={theme} setTheme={setTheme} />
+
         <main className="main" style={mainStyles}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -55,6 +70,8 @@ export default function App(){
              <Route path="/rides/:rideId" element={<RideDetail />} />
             <Route path="/driver-confirmation" element={<DriverConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+
           </Routes>
         </main>
         <Footer />
