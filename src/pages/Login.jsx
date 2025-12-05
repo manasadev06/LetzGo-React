@@ -1,18 +1,20 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiMail, FiLock, FiLogIn } from "react-icons/fi";
+import { FiMail, FiLock, FiLogIn, FiEye, FiEyeOff } from "react-icons/fi";
 import styles from "../styles/Login.module.css";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e) {
@@ -36,20 +38,20 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      // ✅ Clear any old data
+      // 🧹 Clear previous user data
       localStorage.clear();
 
-      // ✅ Store user info
+      // 📝 Store user info
       localStorage.setItem("userId", data.user.id);
       localStorage.setItem("username", data.user.username);
       localStorage.setItem("email", data.user.email);
 
-      // ✅ Store token if backend sends it
+      // 🔐 Store token if backend sends one
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
 
-      // ✅ Go to home
+      // Redirect to homepage
       navigate("/");
     } catch (err) {
       setError(err.message || "An error occurred during login.");
@@ -62,9 +64,12 @@ export default function Login() {
     <div className={styles.page}>
       <div className={styles.card}>
         <h2 className={styles.title}>Login</h2>
+
         {error && <div className={styles.error}>{error}</div>}
-        
+
         <form className={styles.form} onSubmit={handleSubmit}>
+          
+          {/* Email Field */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiMail className={styles.icon} />
@@ -81,24 +86,45 @@ export default function Login() {
             />
           </div>
 
+          {/* Password Field */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiLock className={styles.icon} />
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="Enter your password"
-              required
-            />
+
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="Enter your password"
+                required
+                style={{ paddingRight: "40px" }}
+              />
+
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  fontSize: "18px",
+                }}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </span>
+            </div>
           </div>
 
-          <button 
-            type="submit" 
+          {/* Submit Button */}
+          <button
+            type="submit"
             className={styles.submitButton}
             disabled={loading}
           >
@@ -106,6 +132,7 @@ export default function Login() {
             {!loading && <FiLogIn className={styles.buttonIcon} />}
           </button>
 
+          {/* Footer */}
           <div className={styles.footer}>
             <p>
               Don't have an account?{" "}
