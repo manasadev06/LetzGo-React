@@ -15,49 +15,48 @@ export default function Login() {
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
- async function handleSubmit(e) {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: form.email,
-        password: form.password,
-      }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
 
-    // Read body ONLY ONCE
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-  throw new Error(data.message || "Login failed");
-} else {
-  // Clear old data
-  localStorage.removeItem("userId");
-  localStorage.removeItem("username");
-  localStorage.removeItem("email");
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
 
-  // Store new user
-  localStorage.setItem("userId", data.user.id);
-  localStorage.setItem("username", data.user.username);
-  localStorage.setItem("email", data.user.email);
+      // ✅ Clear any old data
+      localStorage.clear();
 
-  navigate("/"); 
-}
-    // success: store user and go home
-   
-    // or wherever you want after login
-  } catch (err) {
-    setError(err.message || "An error occurred during login.");
-  } finally {
-    setLoading(false);
+      // ✅ Store user info
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("username", data.user.username);
+      localStorage.setItem("email", data.user.email);
+
+      // ✅ Store token if backend sends it
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      // ✅ Go to home
+      navigate("/");
+    } catch (err) {
+      setError(err.message || "An error occurred during login.");
+    } finally {
+      setLoading(false);
+    }
   }
-}
-
 
   return (
     <div className={styles.page}>

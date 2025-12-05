@@ -1,6 +1,7 @@
 // src/pages/OfferRide.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   FiMapPin,
   FiCalendar,
@@ -12,6 +13,8 @@ import {
 import styles from "../styles/OfferRide.module.css";
 
 export default function OfferRide() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     from: "",
     to: "",
@@ -23,7 +26,14 @@ export default function OfferRide() {
   });
 
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+
+  // ✅ Simple auth guard: if no userId, send to login
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -52,16 +62,14 @@ export default function OfferRide() {
       return;
     }
 
-    // get logged-in user from localStorage (set during login)
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (!storedUser) {
-      setError("Please login first");
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
       navigate("/login");
       return;
     }
 
     const body = {
-      userId: storedUser.id,
+      userId: Number(userId),
       pickup: form.from,
       dropLocation: form.to,
       rideDate: form.date, // YYYY-MM-DD
@@ -83,15 +91,10 @@ export default function OfferRide() {
 
       if (!response.ok) {
         setError(data.message || "Failed to post ride");
+      } else {
+        // ✅ On success go to driver dashboard
+        navigate("/driver-dashboard");
       }
-      else{
-        navigate("/driver/dashboard");
-      }
-
-      // ✅ Success – go to confirmation page
-      navigate("/driver-confirmation", {
-        state: { form, rideId: data.rideId },
-      });
     } catch (err) {
       console.error("Offer ride error:", err);
       setError("Something went wrong. Please try again.");
@@ -184,8 +187,8 @@ export default function OfferRide() {
                 onChange={handleChange}
                 className={styles.select}
               >
-                <option value="non-gear">Non-gear Bike</option>
-                <option value="gear">Gear Bike</option>
+              <option value="non-gear">Non-gear Bike</option>
+              <option value="gear">Gear Bike</option>
               </select>
             </div>
 
