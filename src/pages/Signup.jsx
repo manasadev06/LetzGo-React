@@ -11,6 +11,10 @@ export default function Signup() {
     password: "",
     confirmPassword: ""
   });
+
+  const [showPassword, setShowPassword] = useState(false);           // 👁️ toggle 1
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // 👁️ toggle 2
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -50,7 +54,6 @@ export default function Signup() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Signup failed");
 
-      // Store user data and redirect
       localStorage.setItem("user", JSON.stringify(data.user || {}));
       navigate("/login");
     } catch (err) {
@@ -65,8 +68,10 @@ export default function Signup() {
       <div className={styles.card}>
         <h2 className={styles.title}>Create Account</h2>
         {error && <div className={styles.error}>{error}</div>}
-        
+
         <form className={styles.form} onSubmit={handleSubmit}>
+          
+          {/* FULL NAME */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiUser className={styles.icon} />
@@ -83,6 +88,7 @@ export default function Signup() {
             />
           </div>
 
+          {/* EMAIL */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiMail className={styles.icon} />
@@ -99,39 +105,82 @@ export default function Signup() {
             />
           </div>
 
+          {/* PASSWORD */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiLock className={styles.icon} />
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="Create a password (min 6 characters)"
-              required
-              minLength={6}
-            />
+
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="Create a password (min 6 characters)"
+                required
+                minLength={6}
+                style={{ paddingRight: "40px" }}
+              />
+
+              {/* Eye icon for Password */}
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  fontSize: "18px"
+                }}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
           </div>
 
+          {/* CONFIRM PASSWORD */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiLock className={styles.icon} />
               Confirm Password
             </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="Confirm your password"
-              required
-            />
+
+            <div style={{ position: "relative" }}>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="Confirm your password"
+                required
+                style={{ paddingRight: "40px" }}
+              />
+
+              {/* Eye icon for Confirm Password */}
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  fontSize: "18px"
+                }}
+              >
+                {showConfirmPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
           </div>
 
+          {/* BUTTON */}
           <button 
             type="submit" 
             className={styles.submitButton}
@@ -149,6 +198,7 @@ export default function Signup() {
               </Link>
             </p>
           </div>
+
         </form>
       </div>
     </div>

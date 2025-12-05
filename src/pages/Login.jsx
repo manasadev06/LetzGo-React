@@ -8,6 +8,8 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  // 👈 added toggle
+
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -15,49 +17,44 @@ export default function Login() {
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
- async function handleSubmit(e) {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: form.email,
-        password: form.password,
-      }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
 
-    // Read body ONLY ONCE
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-  throw new Error(data.message || "Login failed");
-} else {
-  // Clear old data
-  localStorage.removeItem("userId");
-  localStorage.removeItem("username");
-  localStorage.removeItem("email");
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      } else {
+        // clear old data
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("email");
 
-  // Store new user
-  localStorage.setItem("userId", data.user.id);
-  localStorage.setItem("username", data.user.username);
-  localStorage.setItem("email", data.user.email);
+        // save new data
+        localStorage.setItem("userId", data.user.id);
+        localStorage.setItem("username", data.user.username);
+        localStorage.setItem("email", data.user.email);
 
-  navigate("/"); 
-}
-    // success: store user and go home
-   
-    // or wherever you want after login
-  } catch (err) {
-    setError(err.message || "An error occurred during login.");
-  } finally {
-    setLoading(false);
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.message || "An error occurred during login.");
+    } finally {
+      setLoading(false);
+    }
   }
-}
-
 
   return (
     <div className={styles.page}>
@@ -66,6 +63,8 @@ export default function Login() {
         {error && <div className={styles.error}>{error}</div>}
         
         <form className={styles.form} onSubmit={handleSubmit}>
+
+          {/* Email Field */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiMail className={styles.icon} />
@@ -82,22 +81,44 @@ export default function Login() {
             />
           </div>
 
+          {/* Password Field with Eye Toggle */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiLock className={styles.icon} />
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className={styles.input}
-              placeholder="Enter your password"
-              required
-            />
+
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className={styles.input}
+                placeholder="Enter your password"
+                required
+                style={{ paddingRight: "40px" }}
+              />
+
+              {/* Eye Icon */}
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  fontSize: "18px"
+                }}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
           </div>
 
+          {/* Submit Button */}
           <button 
             type="submit" 
             className={styles.submitButton}
@@ -115,6 +136,7 @@ export default function Login() {
               </Link>
             </p>
           </div>
+
         </form>
       </div>
     </div>
