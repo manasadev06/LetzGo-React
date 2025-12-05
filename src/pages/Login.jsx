@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FiMail, FiLock, FiLogIn } from "react-icons/fi";
 import styles from "../styles/Login.module.css";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -113,7 +114,7 @@ export default function Login() {
                   fontSize: "18px"
                 }}
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <FiEyeOff /> : <FiEye />}
               </span>
             </div>
           </div>

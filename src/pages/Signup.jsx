@@ -1,7 +1,7 @@
 // src/pages/Signup.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import styles from "../styles/Signup.module.css";
 
 export default function Signup() {
@@ -12,8 +12,8 @@ export default function Signup() {
     confirmPassword: ""
   });
 
-  const [showPassword, setShowPassword] = useState(false);           // 👁️ toggle 1
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // 👁️ toggle 2
+  const [showPassword, setShowPassword] = useState(false); // 👁️ toggle #1
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // 👁️ toggle #2
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,6 @@ export default function Signup() {
     e.preventDefault();
     setError("");
 
-    // Validation
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -56,6 +55,7 @@ export default function Signup() {
 
       localStorage.setItem("user", JSON.stringify(data.user || {}));
       navigate("/login");
+
     } catch (err) {
       setError(err.message || "An error occurred during signup. Please try again.");
     } finally {
@@ -70,7 +70,7 @@ export default function Signup() {
         {error && <div className={styles.error}>{error}</div>}
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          
+
           {/* FULL NAME */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
@@ -125,7 +125,6 @@ export default function Signup() {
                 style={{ paddingRight: "40px" }}
               />
 
-              {/* Eye icon for Password */}
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
@@ -138,7 +137,7 @@ export default function Signup() {
                   fontSize: "18px"
                 }}
               >
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? <FiEyeOff /> : <FiEye />}
               </span>
             </div>
           </div>
@@ -162,7 +161,6 @@ export default function Signup() {
                 style={{ paddingRight: "40px" }}
               />
 
-              {/* Eye icon for Confirm Password */}
               <span
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 style={{
@@ -175,7 +173,7 @@ export default function Signup() {
                   fontSize: "18px"
                 }}
               >
-                {showConfirmPassword ? "🙈" : "👁️"}
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
               </span>
             </div>
           </div>
