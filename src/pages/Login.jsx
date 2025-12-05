@@ -1,21 +1,20 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiMail, FiLock, FiLogIn } from "react-icons/fi";
+import { FiMail, FiLock, FiLogIn, FiEye, FiEyeOff } from "react-icons/fi";
 import styles from "../styles/Login.module.css";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);  // 👈 added toggle
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e) {
@@ -37,19 +36,23 @@ export default function Login() {
 
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
-      } else {
-        // clear old data
-        localStorage.removeItem("userId");
-        localStorage.removeItem("username");
-        localStorage.removeItem("email");
-
-        // save new data
-        localStorage.setItem("userId", data.user.id);
-        localStorage.setItem("username", data.user.username);
-        localStorage.setItem("email", data.user.email);
-
-        navigate("/");
       }
+
+      // 🧹 Clear previous user data
+      localStorage.clear();
+
+      // 📝 Store user info
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("username", data.user.username);
+      localStorage.setItem("email", data.user.email);
+
+      // 🔐 Store token if backend sends one
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      // Redirect to homepage
+      navigate("/");
     } catch (err) {
       setError(err.message || "An error occurred during login.");
     } finally {
@@ -61,10 +64,11 @@ export default function Login() {
     <div className={styles.page}>
       <div className={styles.card}>
         <h2 className={styles.title}>Login</h2>
-        {error && <div className={styles.error}>{error}</div>}
-        
-        <form className={styles.form} onSubmit={handleSubmit}>
 
+        {error && <div className={styles.error}>{error}</div>}
+
+        <form className={styles.form} onSubmit={handleSubmit}>
+          
           {/* Email Field */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
@@ -82,7 +86,7 @@ export default function Login() {
             />
           </div>
 
-          {/* Password Field with Eye Toggle */}
+          {/* Password Field */}
           <div className={styles.formGroup}>
             <label className={styles.label}>
               <FiLock className={styles.icon} />
@@ -101,7 +105,6 @@ export default function Login() {
                 style={{ paddingRight: "40px" }}
               />
 
-              {/* Eye Icon */}
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
@@ -111,7 +114,7 @@ export default function Login() {
                   transform: "translateY(-50%)",
                   cursor: "pointer",
                   userSelect: "none",
-                  fontSize: "18px"
+                  fontSize: "18px",
                 }}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -120,8 +123,8 @@ export default function Login() {
           </div>
 
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.submitButton}
             disabled={loading}
           >
@@ -129,6 +132,7 @@ export default function Login() {
             {!loading && <FiLogIn className={styles.buttonIcon} />}
           </button>
 
+          {/* Footer */}
           <div className={styles.footer}>
             <p>
               Don't have an account?{" "}
@@ -137,7 +141,6 @@ export default function Login() {
               </Link>
             </p>
           </div>
-
         </form>
       </div>
     </div>
