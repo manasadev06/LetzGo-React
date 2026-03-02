@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import MapDummy from "../components/MapDummy";
 import styles from "../styles/Confirmation.module.css";
+import MapView from "../components/MapView";
 
 export default function Confirmation(){
   const { state } = useLocation();
@@ -21,7 +21,13 @@ export default function Confirmation(){
         <div><strong>Date:</strong> {date}</div>
       </div>
 
-      <MapDummy small />
+     <MapView
+  pickupText={pickup}
+  destinationText={destination}
+/>
+
+
+
 
       <div className={styles.actions}>
         <button onClick={()=>alert("Booked! (replace with real API)")}>Confirm & Pay</button>

@@ -3,6 +3,8 @@ import styles from "../styles/DriverDashboard.module.css";
 
 export default function DriverDashboard() {
   const [postedRides, setPostedRides] = useState([]);
+  const [driver, setDriver] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [earnings, setEarnings] = useState(null);
   const [selectedRidePassengers, setSelectedRidePassengers] = useState([]);
@@ -17,6 +19,19 @@ export default function DriverDashboard() {
       setLoading(false);
       return;
     }
+async function fetchDriverDetails() {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/drivers/${userId}`
+    );
+    const data = await res.json();
+    if (res.ok) setDriver(data);
+  } catch (err) {
+    console.log("Error fetching driver details");
+  }
+}
+
+fetchDriverDetails();
 
     const fetchRides = async () => {
       try {
@@ -53,7 +68,7 @@ export default function DriverDashboard() {
     if (ride.status === "CANCELLED") return "CANCELLED";
 
     const now = new Date();
-    const time = ride.rideTime.slice(0, 5); // ✅ fix time format
+    const time = ride.rideTime.slice(0, 5);
     const rideDateTime = new Date(`${ride.rideDate}T${time}`);
 
     if (rideDateTime < now) return "COMPLETED";
@@ -62,138 +77,224 @@ export default function DriverDashboard() {
     return "UPCOMING";
   }
 
+  function getStatusClass(status) {
+    switch (status) {
+      case "UPCOMING": return styles.statusUpcoming;
+      case "COMPLETED": return styles.statusCompleted;
+      case "FULL": return styles.statusFull;
+      case "CANCELLED": return styles.statusCancelled;
+      default: return "";
+    }
+  }
+
+  function calculateSeatsPercentage(booked, total) {
+    return (booked / total) * 100;
+  }
+
   return (
     <div className={styles.wrap}>
+      {/* Summary Stats */}
       {earnings && (
         <div className={styles.summary}>
-          <div><strong>Total Rides:</strong> {earnings.totalRides}</div>
-          <div><strong>Seats Booked:</strong> {earnings.totalSeatsBooked}</div>
-          <div><strong>Total Earnings:</strong> ₹{earnings.totalEarnings}</div>
+          <div className={styles.summaryItem}>
+            <strong>{earnings.totalRides}</strong>
+            <div>Total Rides</div>
+          </div>
+          <div className={styles.summaryItem}>
+            <strong>{earnings.totalSeatsBooked}</strong>
+            <div>Seats Booked</div>
+          </div>
+          <div className={styles.summaryItem}>
+            <strong>₹{earnings.totalEarnings}</strong>
+            <div>Total Earnings</div>
+          </div>
         </div>
       )}
 
+{driver && (
+  <div style={{
+    padding: "16px",
+    border: "1px solid #ddd",
+    borderRadius: "12px",
+    marginBottom: "20px"
+  }}>
+    <h3>Driver Details</h3>
+    <p><strong>Name:</strong> {driver.full_name}</p>
+    <p><strong>Phone:</strong> {driver.phone}</p>
+    <p><strong>Vehicle:</strong> {driver.vehicle_type}</p>
+    <p><strong>Vehicle No:</strong> {driver.vehicle_no}</p>
+  </div>
+)}
+
+
+
+
+
       <h2>Your Rides</h2>
 
-      {loading && <p>Loading your rides...</p>}
-      {!loading && error && <p style={{ color: "red" }}>{error}</p>}
+      {loading && (
+        <div className={styles.loadingState}>
+          Loading your rides...
+        </div>
+      )}
+      
+      {!loading && error && (
+        <div className={styles.errorState}>
+          {error}
+        </div>
+      )}
 
-      {!loading && !error && postedRides.length === 0 && <p>No rides yet</p>}
+      {!loading && !error && postedRides.length === 0 && (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyStateIcon}>🚗</div>
+          <h3>No Rides Posted Yet</h3>
+          <p>Start offering rides to earn money and help others travel!</p>
+        </div>
+      )}
 
       {!loading && !error && postedRides.length > 0 && (
         <ul className={styles.list}>
           {postedRides.map((r) => {
             const rideStatus = getRideStatus(r);
             const isFull = r.seatsAvailable === 0;
+            const seatsPercentage = calculateSeatsPercentage(r.seatsBooked, r.totalSeats);
 
             return (
               <li
                 key={r.id}
                 className={`${styles.card} ${isFull ? styles.full : ""}`}
               >
-                <div>
-                  <strong>{r.pickup}</strong> → <strong>{r.dropLocation}</strong>
-                </div>
-
-                <div>{r.rideDate} • {r.rideTime}</div>
-                <div>Vehicle: {r.vehicleType}</div>
-
-                <div>
-                  Seats: <strong>{r.seatsBooked} / {r.totalSeats}</strong>
-                </div>
-
-                <div>
-                  Seats left:{" "}
-                  <strong>
-                    {r.seatsAvailable === 0 ? "FULL" : r.seatsAvailable}
-                  </strong>
-                </div>
-
-                <div>Price per seat: ₹{r.pricePerSeat}</div>
-
-                <div>
-                  Status:{" "}
-                  <strong style={{
-                    color:
-                      rideStatus === "CANCELLED"
-                        ? "#dc2626"
-                        : rideStatus === "COMPLETED"
-                        ? "#6b7280"
-                        : rideStatus === "FULL"
-                        ? "#f97316"
-                        : "#166534"
-                  }}>
+                <div className={styles.rideHeader}>
+                  <div className={styles.rideRoute}>
+                    <div>
+                      <span className={styles.routeIcon}>📍</span>
+                      <strong>{r.pickup}</strong> → <strong>{r.dropLocation}</strong>
+                    </div>
+                    <div className={styles.routeText}>
+                      <div className={styles.fromTo}>
+                        <span>{r.pickup}</span>
+                        <span className={styles.arrow}>→</span>
+                        <span>{r.dropLocation}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`${styles.rideStatus} ${getStatusClass(rideStatus)}`}>
                     {rideStatus}
-                  </strong>
+                  </div>
                 </div>
 
-                {(rideStatus === "UPCOMING" || rideStatus === "FULL") && (
+                <div className={styles.rideDetails}>
+                  <div className={styles.detailItem}>
+                    <span className={styles.detailLabel}>Date</span>
+                    <span className={styles.detailValue}>{r.rideDate}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <span className={styles.detailLabel}>Time</span>
+                    <span className={styles.detailValue}>{r.rideTime}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <span className={styles.detailLabel}>Vehicle</span>
+                    <span className={styles.detailValue}>{r.vehicleType}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <span className={styles.detailLabel}>Price per Seat</span>
+                    <span className={styles.detailValue}>₹{r.pricePerSeat}</span>
+                  </div>
+                </div>
+
+                <div className={styles.seatsProgress}>
+                  <div className={styles.seatsInfo}>
+                    <span className={styles.detailLabel}>Seats Occupied</span>
+                    <span className={styles.detailValue}>
+                      {r.seatsBooked} / {r.totalSeats}
+                    </span>
+                  </div>
+                  <div className={styles.seatsBar}>
+                    <div 
+                      className={styles.seatsFill}
+                      style={{ width: `${seatsPercentage}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.rideActions}>
+                  {(rideStatus === "UPCOMING" || rideStatus === "FULL") && (
+                    <button
+                      onClick={async () => {
+                        const ok = window.confirm("Are you sure you want to cancel this ride?");
+                        if (!ok) return;
+
+                        const res = await fetch(
+                          `http://localhost:5000/api/rides/cancel/${r.id}`,
+                          {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId }),
+                          }
+                        );
+
+                        const data = await res.json();
+                        if (!res.ok) {
+                          alert(data.message);
+                          return;
+                        }
+
+                        setPostedRides((prev) =>
+                          prev.map((ride) =>
+                            ride.id === r.id
+                              ? { ...ride, status: "CANCELLED" }
+                              : ride
+                          )
+                        );
+                      }}
+                      className={styles.cancelBtn}
+                    >
+                      Cancel Ride
+                    </button>
+                  )}
+
                   <button
                     onClick={async () => {
-                      const ok = window.confirm("Cancel this ride?");
-                      if (!ok) return;
-
                       const res = await fetch(
-                        `http://localhost:5000/api/rides/cancel/${r.id}`,
-                        {
-                          method: "DELETE",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ userId }),
-                        }
+                        `http://localhost:5000/api/rides/${r.id}/passengers`
                       );
-
                       const data = await res.json();
-                      if (!res.ok) {
-                        alert(data.message);
-                        return;
-                      }
-
-                      setPostedRides((prev) =>
-                        prev.map((ride) =>
-                          ride.id === r.id
-                            ? { ...ride, status: "CANCELLED" }
-                            : ride
-                        )
-                      );
+                      setSelectedRideId(r.id);
+                      setSelectedRidePassengers(data);
                     }}
-                    className={styles.cancelBtn}
+                    className={styles.viewBtn}
                   >
-                    Cancel Ride
+                    View Passengers
                   </button>
-                )}
-
-                {/* ✅ VIEW PASSENGERS BUTTON */}
-                <button
-                  onClick={async () => {
-                    const res = await fetch(
-                      `http://localhost:5000/api/rides/${r.id}/passengers`
-                    );
-                    const data = await res.json();
-                    setSelectedRideId(r.id);
-                    setSelectedRidePassengers(data);
-                  }}
-                  className={styles.viewBtn}
-                >
-                  View Passengers
-                </button>
+                </div>
               </li>
             );
           })}
         </ul>
       )}
 
-      {/* ✅ PASSENGER PANEL */}
+      {/* Passengers Panel */}
       {selectedRideId && (
         <div className={styles.passengersBox}>
           <h3>Passengers</h3>
 
-          {selectedRidePassengers.length === 0 && <p>No bookings yet.</p>}
-
-          {selectedRidePassengers.map((p) => (
-            <div key={p.id} className={styles.passengerCard}>
-              <strong>{p.name}</strong> ({p.email})
-              <div>Seats booked: {p.seats_booked}</div>
+          {selectedRidePassengers.length === 0 && (
+            <div className={styles.emptyState}>
+              <p>No passengers have booked this ride yet.</p>
             </div>
-          ))}
+          )}
+
+          <div className={styles.passengerList}>
+            {selectedRidePassengers.map((p) => (
+              <div key={p.id} className={styles.passengerCard}>
+                <div className={styles.passengerName}>{p.name}</div>
+                <div className={styles.passengerEmail}>{p.email}</div>
+                <div className={styles.passengerSeats}>
+                  🪑 {p.seats_booked} seat{p.seats_booked > 1 ? 's' : ''} booked
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
