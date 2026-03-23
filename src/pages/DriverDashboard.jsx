@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/DriverDashboard.module.css";
+import { FaMoneyBillWave, FaClock, FaCalendarAlt, FaUser, FaCar } from "react-icons/fa";
 
 export default function DriverDashboard() {
   const [postedRides, setPostedRides] = useState([]);
@@ -53,7 +54,7 @@ export default function DriverDashboard() {
     if (ride.status === "CANCELLED") return "CANCELLED";
 
     const now = new Date();
-    const time = ride.rideTime.slice(0, 5); // ✅ fix time format
+    const time = ride.rideTime.slice(0, 5);
     const rideDateTime = new Date(`${ride.rideDate}T${time}`);
 
     if (rideDateTime < now) return "COMPLETED";
@@ -64,136 +65,149 @@ export default function DriverDashboard() {
 
   return (
     <div className={styles.wrap}>
+
+      {/* Earnings Overview */}
       {earnings && (
-        <div className={styles.summary}>
-          <div><strong>Total Rides:</strong> {earnings.totalRides}</div>
-          <div><strong>Seats Booked:</strong> {earnings.totalSeatsBooked}</div>
-          <div><strong>Total Earnings:</strong> ₹{earnings.totalEarnings}</div>
+        <div className={styles.earningsSection}>
+          <div className={styles.earningCard}>
+            <div className={styles.earningLabel}>Total Earnings</div>
+            <div className={`${styles.earningValue} ${styles.valueGreen}`}>₹{earnings.totalEarnings}</div>
+          </div>
+          <div className={styles.earningCard}>
+            <div className={styles.earningLabel}>Total Rides</div>
+            <div className={styles.earningValue}>{earnings.totalRides}</div>
+          </div>
+          <div className={styles.earningCard}>
+            <div className={styles.earningLabel}>Seats Booked</div>
+            <div className={styles.earningValue}>{earnings.totalSeatsBooked}</div>
+          </div>
         </div>
       )}
 
-      <h2>Your Rides</h2>
+      {/* Rides List */}
+      <h2 className={styles.sectionTitle}>Your Rides</h2>
 
       {loading && <p>Loading your rides...</p>}
       {!loading && error && <p style={{ color: "red" }}>{error}</p>}
-
-      {!loading && !error && postedRides.length === 0 && <p>No rides yet</p>}
+      {!loading && !error && postedRides.length === 0 && <p>No rides posted yet.</p>}
 
       {!loading && !error && postedRides.length > 0 && (
         <ul className={styles.list}>
           {postedRides.map((r) => {
             const rideStatus = getRideStatus(r);
-            const isFull = r.seatsAvailable === 0;
+            // const isFull = r.seatsAvailable === 0;
+
+            let statusClass = styles.statusUp;
+            if (rideStatus === 'FULL') statusClass = styles.statusFull;
+            if (rideStatus === 'COMPLETED') statusClass = styles.statusDone;
+            if (rideStatus === 'CANCELLED') statusClass = styles.statusCancel;
 
             return (
-              <li
-                key={r.id}
-                className={`${styles.card} ${isFull ? styles.full : ""}`}
-              >
-                <div>
-                  <strong>{r.pickup}</strong> → <strong>{r.dropLocation}</strong>
+              <li key={r.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.route}>
+                    {r.pickup} <span className={styles.arrow}>➝</span> {r.dropLocation}
+                  </div>
                 </div>
 
-                <div>{r.rideDate} • {r.rideTime}</div>
-                <div>Vehicle: {r.vehicleType}</div>
+                <div className={styles.cardBody}>
+                  <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}><FaCalendarAlt /> Date</span>
+                    <span className={styles.infoVal}>{r.rideDate} • {r.rideTime.slice(0, 5)}</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}><FaCar /> Vehicle</span>
+                    <span className={styles.infoVal}>{r.vehicleType}</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}><FaMoneyBillWave /> Price</span>
+                    <span className={styles.infoVal}>₹{r.pricePerSeat}</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}><FaUser /> Seats</span>
+                    <span className={styles.infoVal}>{r.seatsBooked} / {r.totalSeats}</span>
+                  </div>
 
-                <div>
-                  Seats: <strong>{r.seatsBooked} / {r.totalSeats}</strong>
+                  <div style={{ marginTop: '8px' }}>
+                    <span className={`${styles.statusBadge} ${statusClass}`}>{rideStatus}</span>
+                  </div>
                 </div>
 
-                <div>
-                  Seats left:{" "}
-                  <strong>
-                    {r.seatsAvailable === 0 ? "FULL" : r.seatsAvailable}
-                  </strong>
-                </div>
-
-                <div>Price per seat: ₹{r.pricePerSeat}</div>
-
-                <div>
-                  Status:{" "}
-                  <strong style={{
-                    color:
-                      rideStatus === "CANCELLED"
-                        ? "#dc2626"
-                        : rideStatus === "COMPLETED"
-                        ? "#6b7280"
-                        : rideStatus === "FULL"
-                        ? "#f97316"
-                        : "#166534"
-                  }}>
-                    {rideStatus}
-                  </strong>
-                </div>
-
-                {(rideStatus === "UPCOMING" || rideStatus === "FULL") && (
+                <div className={styles.cardActions}>
                   <button
                     onClick={async () => {
-                      const ok = window.confirm("Cancel this ride?");
-                      if (!ok) return;
-
                       const res = await fetch(
-                        `http://localhost:5000/api/rides/cancel/${r.id}`,
-                        {
-                          method: "DELETE",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ userId }),
-                        }
+                        `http://localhost:5000/api/rides/${r.id}/passengers`
                       );
-
                       const data = await res.json();
-                      if (!res.ok) {
-                        alert(data.message);
-                        return;
-                      }
-
-                      setPostedRides((prev) =>
-                        prev.map((ride) =>
-                          ride.id === r.id
-                            ? { ...ride, status: "CANCELLED" }
-                            : ride
-                        )
-                      );
+                      setSelectedRideId(r.id);
+                      setSelectedRidePassengers(data);
                     }}
-                    className={styles.cancelBtn}
+                    className={`${styles.btn} ${styles.viewBtn}`}
                   >
-                    Cancel Ride
+                    Passengers
                   </button>
-                )}
 
-                {/* ✅ VIEW PASSENGERS BUTTON */}
-                <button
-                  onClick={async () => {
-                    const res = await fetch(
-                      `http://localhost:5000/api/rides/${r.id}/passengers`
-                    );
-                    const data = await res.json();
-                    setSelectedRideId(r.id);
-                    setSelectedRidePassengers(data);
-                  }}
-                  className={styles.viewBtn}
-                >
-                  View Passengers
-                </button>
+                  {(rideStatus === "UPCOMING" || rideStatus === "FULL") && (
+                    <button
+                      onClick={async () => {
+                        const ok = window.confirm("Cancel this ride?");
+                        if (!ok) return;
+
+                        const res = await fetch(
+                          `http://localhost:5000/api/rides/cancel/${r.id}`,
+                          {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId }),
+                          }
+                        );
+
+                        const data = await res.json();
+                        if (!res.ok) {
+                          alert(data.message);
+                          return;
+                        }
+
+                        setPostedRides((prev) =>
+                          prev.map((ride) =>
+                            ride.id === r.id
+                              ? { ...ride, status: "CANCELLED" }
+                              : ride
+                          )
+                        );
+                      }}
+                      className={`${styles.btn} ${styles.cancelBtn}`}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </li>
             );
           })}
         </ul>
       )}
 
-      {/* ✅ PASSENGER PANEL */}
+      {/* Selected Ride Passengers View */}
       {selectedRideId && (
-        <div className={styles.passengersBox}>
-          <h3>Passengers</h3>
+        <div className={styles.passengersSection}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3>Passenger List (Ride #{selectedRideId})</h3>
+            <button onClick={() => setSelectedRideId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}>Close</button>
+          </div>
 
-          {selectedRidePassengers.length === 0 && <p>No bookings yet.</p>}
+          {selectedRidePassengers.length === 0 && <p className={styles.textMuted}>No passengers have booked this ride yet.</p>}
 
-          {selectedRidePassengers.map((p) => (
-            <div key={p.id} className={styles.passengerCard}>
-              <strong>{p.name}</strong> ({p.email})
-              <div>Seats booked: {p.seats_booked}</div>
-            </div>
-          ))}
+          <div className={styles.passengerGrid}>
+            {selectedRidePassengers.map((p) => (
+              <div key={p.id} className={styles.passengerCard}>
+                <div className={styles.pName}>{p.name}</div>
+                <div className={styles.pEmail}>{p.email}</div>
+                <div className={styles.pSeats}>{p.seats_booked} Seat(s)</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

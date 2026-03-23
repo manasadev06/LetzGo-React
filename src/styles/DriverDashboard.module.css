@@ -1,25 +1,246 @@
-.wrap { max-width:900px; margin:20px auto; padding:16px; }
-.list { list-style:none; padding:0; display:flex; flex-direction:column; gap:8px; }
-.list li { padding:10px; border-radius:8px; border:1px solid #eee; }
-
-.card {
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  margin-bottom: 12px;
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.full {
-  opacity: 0.6;
+.earningsSection {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.earningCard {
+  text-align: center;
+}
+
+.earningLabel {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.earningValue {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.valueGreen {
+  color: #059669;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.cardHeader {
+  padding: 20px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fdfdfd;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  flex-wrap: wrap;
+}
+
+.arrow {
+  color: #9ca3af;
+}
+
+.cardBody {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.infoLabel {
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+.infoVal {
+  font-weight: 600;
+  color: #374151;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.statusUp {
+  background: #dbf4ff;
+  color: #075985;
+}
+
+.statusFull {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.statusDone {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.statusCancel {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.cardActions {
+  padding: 16px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.viewBtn {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.viewBtn:hover {
+  background: #dbeafe;
+}
+
+.cancelBtn {
+  background: #fff;
+  border: 1px solid #fee2e2;
+  color: #dc2626;
+}
+
+.cancelBtn:hover {
   background: #fef2f2;
 }
 
-.summary {
-  display: flex;
-  gap: 24px;
-  padding: 14px 18px;
-  margin-bottom: 20px;
-  border-radius: 14px;
-  background: #f9fafb;
+/* Passengers Panel overlay or inline */
+.passengersSection {
+  margin-top: 40px;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
   border: 1px solid #e5e7eb;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.passengerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.passengerCard {
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.pName {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.pEmail {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pSeats {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
 }

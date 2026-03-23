@@ -1,24 +1,144 @@
-.modeSwitch {
+.layout {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.header {
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.welcomeBanner {
+  background: linear-gradient(120deg, #2563eb, #1d4ed8);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  color: white;
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.2), 0 10px 10px -5px rgba(37, 99, 235, 0.1);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.welcomeBanner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  transform: translate(20%, -20%);
+}
+
+.welcomeTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.025em;
+  position: relative;
+  z-index: 10;
+}
+
+.welcomeText {
+  color: #bfdbfe;
+  margin-top: 0.75rem;
+  font-size: 1.1rem;
+  max-width: 600px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Summary Cards Area */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.summaryCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
+  flex-direction: column;
 }
 
-.switchBtn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background: #f3f4f6;
-  cursor: pointer;
+.summaryLabel {
+  color: #64748b;
+  font-size: 0.875rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.active {
+.summaryValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0.5rem;
+}
+
+/* Tab Switcher */
+.tabsContainer {
+  background: white;
+  padding: 0.5rem;
+  border-radius: 16px;
+  display: inline-flex;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.tabBtn {
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.tabBtn:hover {
+  color: #1e293b;
+  background: #f1f5f9;
+}
+
+.activeTab {
   background: #2563eb;
   color: white;
-  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-.modeContent {
-  margin-top: 20px;
+.activeTab:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+.contentArea {
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
