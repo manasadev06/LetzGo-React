@@ -3,6 +3,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
 const authRoutes = require("./routes/authRoutes");
 const rideRoutes = require("./routes/rideRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
@@ -23,7 +26,7 @@ app.get("/api/drivers/:userId", async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      "SELECT full_name, phone, vehicle_type, vehicle_no FROM drivers WHERE user_id = ?",
+      "SELECT full_name, phone, vehicle_typ, vehicle_no FROM drivers WHERE user_id = ?",
       [userId]
     );
 
