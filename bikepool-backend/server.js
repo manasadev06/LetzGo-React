@@ -3,14 +3,15 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
-});
+
 const authRoutes = require("./routes/authRoutes");
 const rideRoutes = require("./routes/rideRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const userRoutes = require("./routes/userRoutes");
 const app = express();
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
 
 // change origin to your React port (3000 if CRA, 5173 if Vite)
 app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"], credentials: true }));
