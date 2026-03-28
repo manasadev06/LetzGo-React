@@ -1,246 +1,446 @@
+/* Driver Dashboard Styles - Modern Theme */
+@import './theme.css';
+
 .wrap {
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.earningsSection {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.earningCard {
-  text-align: center;
-}
-
-.earningLabel {
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.earningValue {
-  font-size: 32px;
-  font-weight: 800;
-  color: #111827;
-}
-
-.valueGreen {
-  color: #059669;
-}
-
-.sectionTitle {
-  font-size: 24px;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 20px;
-  padding: 0;
-  list-style: none;
-}
-
-.card {
-  background: white;
-  border-radius: 16px;
-  border: 1px solid #f3f4f6;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03);
-  overflow: hidden;
-  transition: all 0.3s ease;
+  padding: var(--spacing-xl);
   position: relative;
-  display: flex;
-  flex-direction: column;
+  z-index: 1;
 }
+
+.wrap h2 {
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-black);
+  background: var(--bg-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-2xl);
+  text-align: center;
+  letter-spacing: -1px;
+  animation: slideInDown 0.6s ease-out;
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Summary Stats */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-xl);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.summaryItem {
+  text-align: center;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: var(--transition);
+}
+
+.summaryItem:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
+}
+
+.summaryItem strong {
+  display: block;
+  font-size: 2rem;
+  font-weight: var(--font-weight-black);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.summaryItem div {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Rides List */
+.list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-xl);
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+/* Ride Card */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-gradient);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover::before { opacity: 0.05; }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
 }
 
-.cardHeader {
-  padding: 20px;
-  border-bottom: 1px solid #f3f4f6;
-  background: #fdfdfd;
+.card.full {
+  opacity: 0.8;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(255, 255, 255, 0.9));
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
-.route {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #1f2937;
-  flex-wrap: wrap;
-}
-
-.arrow {
-  color: #9ca3af;
-}
-
-.cardBody {
-  padding: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.infoRow {
+/* Ride Header */
+.rideHeader {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing);
+  border-bottom: 1px solid var(--border);
+}
+
+.rideRoute {
+  flex: 1;
+}
+
+.rideRoute strong {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  display: flex;
   align-items: center;
-  font-size: 14px;
-  color: #4b5563;
+  gap: var(--spacing-sm);
 }
 
-.infoLabel {
-  font-weight: 500;
-  color: #9ca3af;
-}
-
-.infoVal {
-  font-weight: 600;
-  color: #374151;
-}
-
-.statusBadge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
+.rideStatus {
+  padding: var(--spacing-sm) var(--spacing);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.statusUp {
-  background: #dbf4ff;
-  color: #075985;
+.statusUpcoming {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.statusCompleted {
+  background: var(--text-light);
+  color: var(--text);
 }
 
 .statusFull {
-  background: #ffedd5;
-  color: #c2410c;
+  background: var(--warning-light);
+  color: var(--warning);
 }
 
-.statusDone {
-  background: #f3f4f6;
-  color: #4b5563;
+.statusCancelled {
+  background: var(--error-light);
+  color: var(--error);
 }
 
-.statusCancel {
-  background: #fee2e2;
-  color: #991b1b;
+/* Ride Details */
+.rideDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
 }
 
-.cardActions {
-  padding: 16px;
-  border-top: 1px solid #f3f4f6;
+.detailItem {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
-.btn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 14px;
+.detailLabel {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detailValue {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+}
+
+/* Seats Progress */
+.seatsProgress {
+  margin-bottom: var(--spacing-lg);
+}
+
+.seatsInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.seatsBar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.seatsFill {
+  height: 100%;
+  background: var(--bg-gradient);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.seatsFill::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* Action Buttons */
+.rideActions {
+  display: flex;
+  gap: var(--spacing);
+  flex-wrap: wrap;
+}
+
+.cancelBtn, .viewBtn {
+  padding: var(--spacing) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
   cursor: pointer;
-  border: none;
-  transition: background 0.2s;
-}
-
-.viewBtn {
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-.viewBtn:hover {
-  background: #dbeafe;
+  font-weight: var(--font-weight-bold);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.875rem;
 }
 
 .cancelBtn {
-  background: #fff;
-  border: 1px solid #fee2e2;
-  color: #dc2626;
+  background: var(--error);
+  color: var(--white);
 }
 
 .cancelBtn:hover {
-  background: #fef2f2;
+  background: var(--error-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
 }
 
-/* Passengers Panel overlay or inline */
+.viewBtn {
+  background: var(--bg-gradient);
+  color: var(--white);
+}
+
+.viewBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Passengers Section */
 .passengersSection {
-  margin-top: 40px;
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  border: 1px solid #e5e7eb;
-  animation: slideUp 0.3s ease-out;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  margin-top: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.6s ease-out;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.passengersSection h3 {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-xl);
+  color: var(--text);
 }
 
-.passengerGrid {
+.passengerList {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  gap: var(--spacing-lg);
 }
 
 .passengerCard {
-  background: #f8fafc;
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: var(--transition);
 }
 
-.pName {
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 4px;
+.passengerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
 }
 
-.pEmail {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.passengerName {
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  margin-bottom: var(--spacing-sm);
 }
 
-.pSeats {
+.passengerEmail {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing);
+}
+
+.passengerSeats {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing);
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Loading State */
+.loadingState {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.loadingState::before {
+  content: '';
   display: inline-block;
-  padding: 4px 8px;
-  background: #e0f2fe;
-  color: #0369a1;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing);
+  vertical-align: middle;
+}
+
+/* Error State */
+.errorState {
+  background: var(--error-light);
+  color: var(--error);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+  font-size: 1rem;
+  border-left: 4px solid var(--error);
+  animation: shake 0.5s ease-in-out;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Empty State */
+.emptyState {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-3xl);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.emptyState h3 {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing);
+  color: var(--text);
+}
+
+.emptyState p {
+  color: var(--text-light);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-xl);
+}
+
+.emptyStateIcon {
+  font-size: 4rem;
+  color: var(--primary);
+  margin-bottom: var(--spacing-xl);
+  opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wrap { padding: var(--spacing); }
+  .wrap h2 { font-size: 2rem; }
+  .summary { grid-template-columns: 1fr; gap: var(--spacing); padding: var(--spacing-lg); }
+  .rideHeader { flex-direction: column; gap: var(--spacing); }
+  .rideDetails { grid-template-columns: 1fr; }
+  .rideActions { flex-direction: column; }
+  .cancelBtn, .viewBtn { width: 100%; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .wrap h2 { font-size: 1.75rem; }
+  .card { padding: var(--spacing-lg); }
+  .passengersSection { padding: var(--spacing-lg); }
+  .passengersSection h3 { font-size: 1.25rem; }
 }

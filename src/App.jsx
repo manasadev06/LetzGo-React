@@ -16,7 +16,7 @@ import RideDetail from "./pages/RideDetail";
 import DriverConfirmation from "./pages/DriverConfirmation";
 import MyBookings from "./pages/MyBookings";
 import Dashboard from "./pages/Dashboard";
-
+import MapView from "./components/MapView";
 
 
 
@@ -71,7 +71,7 @@ useEffect(() => {
             <Route path="/driver-confirmation" element={<DriverConfirmation />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/dashboard" element={<Dashboard />} />
-
+            <Route path="/map-view" element={<MapView />} />
           </Routes>
         </main>
         <Footer />

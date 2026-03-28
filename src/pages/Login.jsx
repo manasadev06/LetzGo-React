@@ -38,15 +38,15 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      // 🧹 Clear previous user data
+      // Clear previous user data
       localStorage.clear();
 
-      // 📝 Store user info
+      // Store user info
       localStorage.setItem("userId", data.user.id);
       localStorage.setItem("username", data.user.username);
       localStorage.setItem("email", data.user.email);
 
-      // 🔐 Store token if backend sends one
+      // Store token if backend sends one
       if (data.token) {
         localStorage.setItem("token", data.token);
       }

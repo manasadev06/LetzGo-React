@@ -7,6 +7,10 @@ import {
 } from "react-icons/fi";
 import RideCard from "../components/RideCard";
 import styles from "../styles/BookRide.module.css";
+import { geocodePlace } from "../utils/geocode";
+import { getRoute } from "../utils/getRoute";
+import { isPickupOnRoute } from "../utils/isPointNearRoute";
+
 
 export default function BookRide() {
   const [pickup, setPickup] = useState("");
@@ -31,6 +35,23 @@ export default function BookRide() {
   }, []);
 
   async function fetchResults(query) {
+    const passengerPickupCoords = await geocodePlace(query.pickup);
+    const geoCache = {};
+
+async function geo(place) {
+  if (!geoCache[place]) {
+    geoCache[place] = await geocodePlace(place);
+  }
+  return geoCache[place];
+}
+
+
+if (!passengerPickupCoords) {
+  setError("Unable to locate pickup location");
+  setIsLoading(false);
+  return;
+}
+
     setIsLoading(true);
     setError("");
 
@@ -66,6 +87,31 @@ export default function BookRide() {
         trips: r.trips,    // dummy from SQL
       }));
 
+
+      const matched = [];
+
+for (const ride of mapped) {
+  // 1️⃣ get driver route
+  const driverRoute = await getRoute(
+    await geo(ride.from),
+    await geo(ride.to)
+  );
+
+  if (!driverRoute) continue;
+
+  // 2️⃣ check if passenger pickup is on route
+  const isMatch = isPickupOnRoute(
+    passengerPickupCoords,
+    driverRoute,
+    3 // 500 meters
+  );
+
+  if (isMatch) {
+    matched.push(ride);
+  }
+}
+
+
       // Apply frontend filters
       const filtered = mapped.filter((r) => {
         const matchesVehicle =
@@ -82,8 +128,9 @@ export default function BookRide() {
 console.log("MAPPED:", mapped);
 console.log("FILTERED:", filtered);
 
-      //setResults(filtered);
-      setResults(mapped);
+     
+     setResults(matched);
+
     } catch (err) {
       console.error("Search error:", err);
       setError("Something went wrong while searching rides");
@@ -107,7 +154,7 @@ console.log("FILTERED:", filtered);
   }
 
   function selectRide(ride) {
-  navigate(`/rides/${ride.id}`, {
+  navigate("/maps", {
     state: {
       ride,
       pickup,

@@ -14,7 +14,7 @@ export default function Footer() {
           <div className={styles.footerSection}>
             <h3 className={styles.footerTitle}>BikePooling</h3>
             <p className={styles.aboutText}>
-              Connecting riders and commuters for a greener, more affordable way to travel. 
+              Connecting riders and commuters for a greener, more affordable way to travel.
               Join our community today and make your commute better.
             </p>
             <div className={styles.socialLinks}>
@@ -51,7 +51,7 @@ export default function Footer() {
             <ul className={styles.contactInfo}>
               <li className={styles.contactItem}>
                 <FiMapPin className={styles.contactIcon} />
-                <span>123 Bike Lane, Cycling City, 10001</span>
+                <span>Kukatpally, Hyderabad, 500072</span>
               </li>
               <li className={styles.contactItem}>
                 <FiPhone className={styles.contactIcon} />
@@ -71,11 +71,11 @@ export default function Footer() {
               Subscribe to our newsletter for the latest updates and offers.
             </p>
             <form className={styles.newsletterForm}>
-              <input 
-                type="email" 
-                placeholder="Your email address" 
+              <input
+                type="email"
+                placeholder="Your email address"
                 className={styles.newsletterInput}
-                required 
+                required
               />
               <button type="submit" className={styles.newsletterButton}>
                 Subscribe

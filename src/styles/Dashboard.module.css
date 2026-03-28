@@ -52,7 +52,6 @@
   z-index: 10;
 }
 
-/* Summary Cards Area */
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -85,7 +84,6 @@
   margin-top: 0.5rem;
 }
 
-/* Tab Switcher */
 .tabsContainer {
   background: white;
   padding: 0.5rem;
@@ -132,13 +130,6 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
